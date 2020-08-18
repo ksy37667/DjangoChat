@@ -29,3 +29,7 @@ CHANNEL_LAYERS = {
 ```
 
 * 도커는 [Docker install](https://www.docker.com/get-started) 에서 다운받으면 된다.
+
+
+## 🔍참고 문서
+[https://channels.readthedocs.io/en/latest/tutorial/part_1.html#](https://channels.readthedocs.io/en/latest/tutorial/part_1.html#)
