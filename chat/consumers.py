@@ -1,34 +1,33 @@
 import json
-from asgiref.sync import async_to_sync
-from channels.generic.websocket import WebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer
 
-class ChatConsumer(WebsocketConsumer):
-    def connect(self):
+class ChatConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
 
-        # Join room group
-        async_to_sync(self.channel_layer.group_add)(
+        # 대화방에 참여한다.
+        await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
         )
 
-        self.accept()
+        await self.accept()
 
-    def disconnect(self, close_code):
-        # Leave room group
-        async_to_sync(self.channel_layer.group_discard)(
+    async def  disconnect(self, close_code):
+        # 대화방에서 나간다.
+        await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
 
-    # Receive message from WebSocket
-    def receive(self, text_data):
+    # 웹소켓으로부터 메세지를 받는다
+    async def  receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
 
-        # Send message to room group
-        async_to_sync(self.channel_layer.group_send)(
+        # 대화방으로 메세지를 보낸다.
+        await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'chat_message',
@@ -36,11 +35,11 @@ class ChatConsumer(WebsocketConsumer):
             }
         )
 
-    # Receive message from room group
-    def chat_message(self, event):
+    # 대화방으로부터 메세지를 받는다.
+    async def  chat_message(self, event):
         message = event['message']
 
-        # Send message to WebSocket
-        self.send(text_data=json.dumps({
+        # 웹소켓으로 메세지를 보낸다.
+        await self.send(text_data=json.dumps({
             'message': message
         }))
