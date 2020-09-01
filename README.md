@@ -17,10 +17,15 @@
 * `ASGI`는 Asyncrhonous Server Gateway Interface의 약자로 쉽게 설명하면 WSGI의 비동기식 버전이다.
 
 ## 🔍 Docker를 통한 Redis 설치 후 프로젝트와 연동
+* 튜토리얼에서는 backing store로서 Redis를 채널 레이어로 사용했다. port 6379에서 Redis server를 run하고, chennel_redis를 설치해야 한다.
 ```
 docker run -p 6379:6379 -d redis:5
 ```
+``` 
+python3 -m pip install channels_redis
+```
 
+* settings.py 에 채널 레이어를 설정한다.
 ```python
 # settings.py
 
